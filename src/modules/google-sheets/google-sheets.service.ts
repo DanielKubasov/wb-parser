@@ -1,4 +1,5 @@
 import { GoogleService } from '@/core/google/google.service';
+import { getDate } from '@/utils/get-date';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
@@ -18,14 +19,14 @@ export class GoogleSheetsService {
             const sheetId =
                 this.configService.getOrThrow<string>('GOOGLE_SHEET_ID');
 
-            const sheetName = 'Wildberries information';
-
             const values = data.warehouseList.map(v => {
                 const res: string[] = [];
 
                 for (const val of Object.values(v)) {
                     res.push(String(val));
                 }
+
+                res.push(getDate())
 
                 return res;
             });
@@ -37,14 +38,15 @@ export class GoogleSheetsService {
                     'boxDeliveryLiter',
                     'boxStorageBase',
                     'boxStorageLiter',
-                    'warehouseName'
+                    'warehouseName',
+                    'date'
                 ],
                 ...values
             ];
 
             await sheets.spreadsheets.values.update({
                 spreadsheetId: sheetId,
-                range: `A:F`,
+                range: `A:G`,
                 valueInputOption: 'RAW',
                 requestBody: { values: resource }
             });

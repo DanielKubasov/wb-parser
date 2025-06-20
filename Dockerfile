@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install --production
+RUN npm install
 
 FROM base AS build
 
@@ -25,6 +25,14 @@ WORKDIR /app
 COPY --from=build /app/dist ./dist
 
 COPY --from=build /app/node_modules ./node_modules
+
+COPY --from=build /app/startup.sh ./startup.sh
+
+COPY --from=build /app/migrations ./migrations
+
+COPY --from=build /app/secrets ./secrets
+
+COPY --from=build /app/knexfile.ts ./knexfile.ts
 
 RUN chmod +x ./startup.sh
 

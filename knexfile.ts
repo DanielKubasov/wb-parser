@@ -2,7 +2,7 @@
 import { config as dotenvConfig } from 'dotenv';
 dotenvConfig();
 
-module.exports = {
+export default {
     development: {
         client: 'pg',
         connection: {

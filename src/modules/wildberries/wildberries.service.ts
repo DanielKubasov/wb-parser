@@ -9,6 +9,10 @@ import axios, { type AxiosInstance } from 'axios';
 
 import { StatisticsService } from '@/modules/statistics/statistics.service';
 import { GoogleSheetsService } from '@/modules/google-sheets/google-sheets.service';
+
+import { Cron } from '@nestjs/schedule';
+import { CronExpression } from '@nestjs/schedule';
+
 import { getDate } from '@/utils/get-date';
 
 @Injectable()
@@ -28,6 +32,7 @@ export class WildberriesService {
         private readonly configService: ConfigService
     ) {}
 
+    @Cron(CronExpression.EVERY_10_SECONDS)
     public async getStatistics(): Promise<void> {
         try {
             const response = await this.httpClient.get<any>('/tariffs/box', {

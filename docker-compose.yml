@@ -10,11 +10,17 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     ports:
-      - 5433:5432
+      - 5432:5432
     networks:
       - application
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
   
   backend:
     build: .
@@ -24,6 +30,10 @@ services:
       - 3001:${APPLICATION_PORT}
     networks:
       - application
+    depends_on:
+      database:
+        condition: service_healthy
+        restart: true
     
 
 networks:
